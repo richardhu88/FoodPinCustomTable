@@ -121,6 +121,64 @@ class RestaurantTableViewController: UITableViewController {
 
     }
 
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
+    // Delete the row from the data source
+    self.restaurantNames.remove(at: indexPath.row)
+    self.restaurantLocations.remove(at: indexPath.row)
+    self.restaurantTypes.remove(at: indexPath.row)
+    self.restaurantIsVisited.remove(at: indexPath.row)
+    self.restaurantImages.remove(at: indexPath.row)
+
+    self.tableView.deleteRows(at: [indexPath], with: .fade)
+
+    // Call completion handler with true to indicate
+    completionHandler(true)
+    }
+
+    let shareAction = UIContextualAction(style: .normal, title: "Share") { (action, sourceView, completionHandler) in
+    let defaultText = "Just checking in at " + self.restaurantNames[indexPath.row]
+
+    let activityController = UIActivityViewController(activityItems: [defaultText], applicationActivities: nil)
+
+    self.present(activityController, animated: true, completion: nil)
+    completionHandler(true)
+    }
+
+        
+        
+    // Set the icon and background color for the actions
+    deleteAction.backgroundColor = UIColor(red: 231.0/255.0, green: 76.0/255.0, blue: 60.0/255.0, alpha: 1.0)
+    deleteAction.image = UIImage(systemName: "trash")
+
+    shareAction.backgroundColor = UIColor(red: 254.0/255.0, green: 149.0/255.0, blue: 38.0/255.0, alpha: 1.0)
+    shareAction.image = UIImage(systemName: "square.and.arrow.up")
+
+        
+    let swipeConfiguration = UISwipeActionsConfiguration(actions: [deleteAction, shareAction])
+
+    return swipeConfiguration
+    }
+     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+            
+    let checkInAction = UIContextualAction(style: .normal, title: "Check-in") { (action, sourceView, completionHandler) in
+                
+    let cell = tableView.cellForRow(at: indexPath) as! RestaurantTableViewCell
+    self.restaurantIsVisited[indexPath.row] = (self.restaurantIsVisited[indexPath.row]) ? false : true
+    cell.accessoryType = self.restaurantIsVisited[indexPath.row] ? .checkmark : .none
+                
+    completionHandler(true)
+    }
+            
+    let checkInIcon = restaurantIsVisited[indexPath.row] ? "arrow.uturn.left" : "checkmark"
+    checkInAction.backgroundColor = UIColor(red: 38.0/255.0, green: 162.0/255.0, blue: 78.0/255.0, alpha: 1.0)
+    checkInAction.image = UIImage(systemName: checkInIcon)
+            
+    let swipeConfiguration = UISwipeActionsConfiguration(actions: [checkInAction])
+          
+            
+    return swipeConfiguration
+    }
 
     
 }
